@@ -70,5 +70,15 @@ New-DotfilesLink `
     -DestinationPath "$HomeDir\.wezterm.lua" `
     -Name "WezTerm configuration"
 
+# PowerShell Configuration
+Write-Host ""
+Write-Host "Setting up PowerShell..." -ForegroundColor $ColorYellow
+
+# PowerShell profile
+New-DotfilesLink `
+    -SourcePath "$DotfilesDir\pwsh\Microsoft.PowerShell_profile.ps1" `
+    -DestinationPath $Profile `
+    -Name "PowerShell profile"
+
 Write-Host ""
 Write-Host "✓ Dotfiles setup completed successfully!" -ForegroundColor $ColorGreen
