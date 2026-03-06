@@ -75,10 +75,24 @@ Write-Host ""
 Write-Host "Setting up PowerShell..." -ForegroundColor $ColorYellow
 
 # PowerShell profile
-New-DotfilesLink `
-    -SourcePath "$DotfilesDir\pwsh\Microsoft.PowerShell_profile.ps1" `
-    -DestinationPath $Profile `
-    -Name "PowerShell profile"
+# シンボリックリンクではなく、実際のプロファイルから dotfiles を読み込む
+$ProfileDir = Split-Path -Parent $Profile
+if (-not (Test-Path $ProfileDir)) {
+    New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
+}
+
+$ProfileLine = ". `"$DotfilesDir\pwsh\Microsoft.PowerShell_profile.ps1`""
+if (-not (Test-Path $Profile)) {
+    New-Item -ItemType File -Path $Profile -Force | Out-Null
+}
+
+$ProfileContent = Get-Content $Profile -ErrorAction SilentlyContinue
+if ($ProfileContent -notcontains $ProfileLine) {
+    Add-Content -Path $Profile -Value $ProfileLine
+    Write-Host "✓ PowerShell profile に dotfiles の読み込みを追加しました" -ForegroundColor $ColorGreen
+} else {
+    Write-Host "✓ PowerShell profile は設定済みです" -ForegroundColor $ColorGreen
+}
 
 Write-Host ""
 Write-Host "✓ Dotfiles setup completed successfully!" -ForegroundColor $ColorGreen
