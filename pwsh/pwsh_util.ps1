@@ -1,7 +1,7 @@
 # fzf でディレクトリを選択して移動
 function fcd {
-    $dir = fd --type d --hidden --exclude .git 2>/dev/null |
-        fzf --preview "eza -la --color=always {} 2>/dev/null || ls {}"
+    $dir = fd --type d --hidden --exclude .git 2>$null |
+        fzf --preview "eza -la --color=always {} 2>nul || dir {}"
     if ($dir) { Set-Location $dir }
 }
 
@@ -18,7 +18,7 @@ function up([int]$n = 1) {
 
 # fzf でファイルを選択してエディタで開く（bat でプレビュー）
 function fe {
-    $file = fd --type f --hidden --exclude .git 2>/dev/null |
+    $file = fd --type f --hidden --exclude .git 2>$null |
         fzf --preview "bat --color=always --style=numbers {}"
     if ($file) { & ($env:EDITOR ?? "code") $file }
 }
