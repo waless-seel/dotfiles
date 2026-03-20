@@ -11,7 +11,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-pwsh -ExecutionPolicy Bypass -File "%~dp0setup.ps1" %*
+pwsh -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup.ps1" %*
 
 if %errorlevel% neq 0 (
     echo.
