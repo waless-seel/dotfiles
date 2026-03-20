@@ -98,7 +98,7 @@ Write-Host ""
 Write-Host "Setting up mise..." -ForegroundColor $ColorYellow
 New-DotfilesLink `
     -SourcePath "$DotfilesDir\mise.toml" `
-    -DestinationPath "$env:APPDATA\mise\config.toml" `
+    -DestinationPath "$HomeDir\.config\mise\config.toml" `
     -Name "mise global config"
 
 # ツールを一括インストール
