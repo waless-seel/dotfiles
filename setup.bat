@@ -1,12 +1,17 @@
 @echo off
 REM Dotfiles Setup Script for Windows
+REM pwsh (PowerShell 7+) が必要です
 
-set "DOTFILES_DIR=%~dp0"
+where pwsh >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ERROR: pwsh ^(PowerShell 7+^) が見つかりません。
+    echo 以下のコマンドでインストールしてください:
+    echo   winget install --id Microsoft.PowerShell
+    pause
+    exit /b 1
+)
 
-echo Running dotfiles setup...
-echo.
-
-powershell -NoProfile -ExecutionPolicy RemoteSigned -File "%DOTFILES_DIR%setup.ps1"
+pwsh -ExecutionPolicy Bypass -File "%~dp0setup.ps1" %*
 
 if %errorlevel% neq 0 (
     echo.

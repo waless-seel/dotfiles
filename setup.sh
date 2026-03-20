@@ -36,11 +36,43 @@ create_symlink() {
     echo -e "${GREEN}✓ Created symlink for $name${NC}"
 }
 
+# mise のインストール
+echo -e "\n${YELLOW}Checking mise...${NC}"
+if command -v mise >/dev/null 2>&1; then
+    echo -e "${GREEN}✓ mise はインストール済みです${NC}"
+else
+    echo -e "${YELLOW}mise をインストールしています...${NC}"
+    curl https://mise.run | sh
+    # インストール先を PATH に追加（現セッション用）
+    export PATH="$HOME/.local/bin:$PATH"
+    echo -e "${GREEN}✓ mise をインストールしました${NC}"
+fi
+
 # WezTerm Configuration
 echo -e "\n${YELLOW}Setting up WezTerm...${NC}"
 create_symlink \
     "$DOTFILES_DIR/WezTerm/.wezterm.lua" \
     "$HOME_DIR/.wezterm.lua" \
     "WezTerm configuration"
+
+# zsh 設定
+echo -e "\n${YELLOW}Setting up zsh...${NC}"
+create_symlink \
+    "$DOTFILES_DIR/zsh/.zshrc" \
+    "$HOME_DIR/.zshrc" \
+    "zsh configuration"
+
+# mise グローバル config
+echo -e "\n${YELLOW}Setting up mise...${NC}"
+create_symlink \
+    "$DOTFILES_DIR/mise.toml" \
+    "$HOME_DIR/.config/mise/config.toml" \
+    "mise global config"
+
+# ツールを一括インストール
+echo -e "\n${YELLOW}Running mise install...${NC}"
+mise trust "$DOTFILES_DIR/mise.toml"
+mise install
+echo -e "${GREEN}✓ mise install 完了${NC}"
 
 echo -e "\n${GREEN}✓ Dotfiles setup completed successfully!${NC}"

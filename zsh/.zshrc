@@ -1,3 +1,5 @@
+eval "$(mise activate zsh)"
+
 eval "$(starship init zsh)"      # zsh の場合
 # eval "$(starship init bash)"   # bash の場合は手動で切り替え
 eval "$(zoxide init zsh)"

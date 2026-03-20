@@ -1,0 +1,26 @@
+[tools]
+fzf      = "latest"
+fd       = "latest"
+bat      = "latest"
+rg       = "latest"
+eza      = "latest"
+zoxide   = "latest"
+starship = "latest"
+delta    = "latest"
+lazygit  = "latest"
+
+# 言語ランタイム (必要に応じてコメントアウト解除)
+# node   = "lts"
+# python = "latest"
+
+[tasks.install]
+description = "全ツールをインストール"
+run = "mise install"
+
+[tasks.update]
+description = "全ツールを最新版に更新"
+run = "mise upgrade"
+
+[tasks.doctor]
+description = "インストール状態を診断"
+run = ["mise doctor", "mise ls"]

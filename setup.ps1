@@ -1,5 +1,6 @@
 # Dotfiles Setup Script for Windows (PowerShell)
 # This script creates symbolic links for dotfiles configuration
+# 要件: pwsh (PowerShell 7+)
 
 param(
     [switch]$NoAdmin = $false
@@ -28,6 +29,25 @@ $DotfilesDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $HomeDir = $env:USERPROFILE
 
 Write-Host "Starting dotfiles setup..." -ForegroundColor $ColorYellow
+
+# mise のインストール (winget)
+Write-Host ""
+Write-Host "Checking mise..." -ForegroundColor $ColorYellow
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Host "ERROR: winget が見つかりません。Microsoft Store から 'App Installer' をインストールしてください。" -ForegroundColor $ColorRed
+    exit 1
+}
+
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    Write-Host "✓ mise はインストール済みです" -ForegroundColor $ColorGreen
+} else {
+    Write-Host "mise をインストールしています..." -ForegroundColor $ColorYellow
+    winget install --id jdx.mise --silent --accept-source-agreements --accept-package-agreements
+    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = $machinePath + ';' + $userPath
+    Write-Host "✓ mise をインストールしました" -ForegroundColor $ColorGreen
+}
 
 # Function to create symlink
 function New-DotfilesLink {
@@ -74,8 +94,6 @@ New-DotfilesLink `
 Write-Host ""
 Write-Host "Setting up PowerShell..." -ForegroundColor $ColorYellow
 
-# PowerShell profile
-# シンボリックリンクではなく、実際のプロファイルから dotfiles を読み込む
 $ProfileDir = Split-Path -Parent $Profile
 if (-not (Test-Path $ProfileDir)) {
     New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
@@ -93,6 +111,21 @@ if ($ProfileContent -notcontains $ProfileLine) {
 } else {
     Write-Host "✓ PowerShell profile は設定済みです" -ForegroundColor $ColorGreen
 }
+
+# mise グローバル config
+Write-Host ""
+Write-Host "Setting up mise..." -ForegroundColor $ColorYellow
+New-DotfilesLink `
+    -SourcePath "$DotfilesDir\mise.toml" `
+    -DestinationPath "$env:APPDATA\mise\config.toml" `
+    -Name "mise global config"
+
+# ツールを一括インストール
+Write-Host ""
+Write-Host "Running mise install..." -ForegroundColor $ColorYellow
+mise trust "$DotfilesDir\mise.toml"
+mise install
+Write-Host "✓ mise install 完了" -ForegroundColor $ColorGreen
 
 Write-Host ""
 Write-Host "✓ Dotfiles setup completed successfully!" -ForegroundColor $ColorGreen
