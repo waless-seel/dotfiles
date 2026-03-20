@@ -2,12 +2,6 @@
 # This script creates symbolic links for dotfiles configuration
 # 要件: pwsh (PowerShell 7+)
 
-# 管理者権限がなければ UAC 昇格して再起動
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Start-Process pwsh -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
-    exit
-}
-
 # Colors for output
 $ColorGreen = 'Green'
 $ColorYellow = 'Yellow'
@@ -57,13 +51,13 @@ function New-DotfilesLink {
         Remove-Item -Path $DestinationPath -Force
     }
 
-    # Create symlink
+    # Create hardlink
     try {
-        New-Item -ItemType SymbolicLink -Path $DestinationPath -Target $SourcePath -Force -ErrorAction Stop | Out-Null
-        Write-Host "✓ Created symlink for $Name" -ForegroundColor $ColorGreen
+        New-Item -ItemType HardLink -Path $DestinationPath -Target $SourcePath -Force -ErrorAction Stop | Out-Null
+        Write-Host "✓ Created hardlink for $Name" -ForegroundColor $ColorGreen
     }
     catch {
-        Write-Host "✗ Failed to create symlink for $Name" -ForegroundColor $ColorRed
+        Write-Host "✗ Failed to create hardlink for $Name" -ForegroundColor $ColorRed
         Write-Host "  Error: $_" -ForegroundColor $ColorRed
         exit 1
     }
