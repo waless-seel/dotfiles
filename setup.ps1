@@ -2,28 +2,16 @@
 # This script creates symbolic links for dotfiles configuration
 # 要件: pwsh (PowerShell 7+)
 
-param(
-    [switch]$NoAdmin = $false
-)
+# 管理者権限がなければ UAC 昇格して再起動
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Start-Process pwsh -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    exit
+}
 
 # Colors for output
 $ColorGreen = 'Green'
 $ColorYellow = 'Yellow'
 $ColorRed = 'Red'
-
-# Check for administrator privileges
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    if (-not $NoAdmin) {
-        Write-Host "WARNING: This script may require administrator privileges to create symbolic links." -ForegroundColor $ColorYellow
-        Write-Host "Please run PowerShell as Administrator or use the -NoAdmin flag to continue without this check." -ForegroundColor $ColorYellow
-        Write-Host ""
-        $response = Read-Host "Continue without administrator privileges? (y/n)"
-        if ($response -ne 'y' -and $response -ne 'Y') {
-            Write-Host "Setup cancelled." -ForegroundColor $ColorRed
-            exit 1
-        }
-    }
-}
 
 $DotfilesDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $HomeDir = $env:USERPROFILE
@@ -71,13 +59,12 @@ function New-DotfilesLink {
 
     # Create symlink
     try {
-        New-Item -ItemType SymbolicLink -Path $DestinationPath -Target $SourcePath -Force | Out-Null
+        New-Item -ItemType SymbolicLink -Path $DestinationPath -Target $SourcePath -Force -ErrorAction Stop | Out-Null
         Write-Host "✓ Created symlink for $Name" -ForegroundColor $ColorGreen
     }
     catch {
         Write-Host "✗ Failed to create symlink for $Name" -ForegroundColor $ColorRed
         Write-Host "  Error: $_" -ForegroundColor $ColorRed
-        Write-Host "  Try running PowerShell as Administrator" -ForegroundColor $ColorYellow
         exit 1
     }
 }
