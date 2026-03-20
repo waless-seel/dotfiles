@@ -36,6 +36,24 @@ create_symlink() {
     echo -e "${GREEN}✓ Created symlink for $name${NC}"
 }
 
+# GPG のインストール (mise の署名検証に必要)
+echo -e "\n${YELLOW}Checking GPG...${NC}"
+if command -v gpg >/dev/null 2>&1; then
+    echo -e "${GREEN}✓ GPG はインストール済みです${NC}"
+else
+    echo -e "${YELLOW}GPG をインストールしています...${NC}"
+    if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get install -y gnupg
+    elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y gnupg2
+    elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -S --noconfirm gnupg
+    else
+        echo -e "${RED}✗ パッケージマネージャが見つかりません。手動で GPG をインストールしてください${NC}"
+    fi
+    echo -e "${GREEN}✓ GPG をインストールしました${NC}"
+fi
+
 # mise のインストール
 echo -e "\n${YELLOW}Checking mise...${NC}"
 if command -v mise >/dev/null 2>&1; then
@@ -72,7 +90,7 @@ create_symlink \
 # ツールを一括インストール
 echo -e "\n${YELLOW}Running mise install...${NC}"
 mise trust "$DOTFILES_DIR/mise.toml"
-mise install
+mise run install
 echo -e "${GREEN}✓ mise install 完了${NC}"
 
 echo -e "\n${GREEN}✓ Dotfiles setup completed successfully!${NC}"

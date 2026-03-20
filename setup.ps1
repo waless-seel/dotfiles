@@ -12,12 +12,49 @@ $HomeDir = $env:USERPROFILE
 
 Write-Host "Starting dotfiles setup..." -ForegroundColor $ColorYellow
 
+# Git for Windows のインストール (bash を含む)
+Write-Host ""
+Write-Host "Checking Git..." -ForegroundColor $ColorYellow
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    Write-Host "✓ Git はインストール済みです" -ForegroundColor $ColorGreen
+} else {
+    Write-Host "Git for Windows をインストールしています..." -ForegroundColor $ColorYellow
+    winget install --id Git.Git --silent --accept-source-agreements --accept-package-agreements
+    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = $machinePath + ';' + $userPath
+    Write-Host "✓ Git をインストールしました" -ForegroundColor $ColorGreen
+}
+
+# Git Bash を WSL より優先（bash がWSLに解決されるのを防ぐ）
+$gitBash = "C:\Program Files\Git\bin"
+$userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+if ((Test-Path $gitBash) -and ($userPath -notlike "*$gitBash*")) {
+    [System.Environment]::SetEnvironmentVariable('Path', "$gitBash;$userPath", 'User')
+    $env:Path = "$gitBash;" + $env:Path
+    Write-Host "✓ Git Bash を PATH の先頭に追加しました" -ForegroundColor $ColorGreen
+}
+
 # mise のインストール (winget)
 Write-Host ""
 Write-Host "Checking mise..." -ForegroundColor $ColorYellow
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Write-Host "ERROR: winget が見つかりません。Microsoft Store から 'App Installer' をインストールしてください。" -ForegroundColor $ColorRed
     exit 1
+}
+
+# GPG のインストール (mise の署名検証に必要)
+Write-Host ""
+Write-Host "Checking GPG..." -ForegroundColor $ColorYellow
+if (Get-Command gpg -ErrorAction SilentlyContinue) {
+    Write-Host "✓ GPG はインストール済みです" -ForegroundColor $ColorGreen
+} else {
+    Write-Host "GPG をインストールしています..." -ForegroundColor $ColorYellow
+    winget install --id GnuPG.GnuPG --silent --accept-source-agreements --accept-package-agreements
+    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = $machinePath + ';' + $userPath
+    Write-Host "✓ GPG をインストールしました" -ForegroundColor $ColorGreen
 }
 
 if (Get-Command mise -ErrorAction SilentlyContinue) {
@@ -105,7 +142,7 @@ New-DotfilesLink `
 Write-Host ""
 Write-Host "Running mise install..." -ForegroundColor $ColorYellow
 mise trust "$DotfilesDir\mise.toml"
-mise install
+mise run install
 Write-Host "✓ mise install 完了" -ForegroundColor $ColorGreen
 
 Write-Host ""

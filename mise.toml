@@ -8,14 +8,17 @@ zoxide   = "latest"
 starship = "latest"
 delta    = "latest"
 lazygit  = "latest"
-
-# 言語ランタイム (必要に応じてコメントアウト解除)
-# node   = "lts"
-# python = "latest"
+node     = "lts"
+python   = "latest"
+claude   = "latest"
 
 [tasks.install]
 description = "全ツールをインストール"
-run = "mise install"
+run = ["mise install", "mise run npm-globals"]
+
+[tasks.npm-globals]
+description = "グローバル npm パッケージをインストール (.default-npm-packages)"
+run = "bash scripts/npm-globals.sh"
 
 [tasks.update]
 description = "全ツールを最新版に更新"
