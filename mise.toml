@@ -11,6 +11,7 @@ lazygit  = "latest"
 node     = "lts"
 python   = "latest"
 claude   = "latest"
+codex    = "latest"
 
 [tasks.install]
 description = "全ツールをインストール"
