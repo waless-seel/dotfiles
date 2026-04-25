@@ -38,6 +38,18 @@ function gbd {
     }
 }
 
+# fzf でブランチを選んでマージ (gmf)
+function gmf {
+    $currentBranch = git branch --show-current
+    $branch = git branch --list | Where-Object { $_ -notmatch '^\*' } |
+        fzf --preview "git log --oneline --color=always {}..HEAD" `
+            --header "merge into: $currentBranch"
+    if ($branch) {
+        $branchName = ($branch -replace '^\s*').Trim()
+        git merge $branchName
+    }
+}
+
 # ログブラウザ
 function glf {
     git log --oneline --color=always |
