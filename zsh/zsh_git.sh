@@ -58,6 +58,21 @@ function gbd() {
   fi
 }
 
+# fzf でブランチを選んでマージ (gmf)
+function gmf() {
+  local current_branch
+  current_branch=$(git branch --show-current)
+  local branch
+  branch=$(git branch --list | grep -v '^\*' |
+    fzf --preview "git log --oneline --color=always {}..HEAD" \
+        --header "merge into: $current_branch")
+  if [[ -n "$branch" ]]; then
+    local branch_name
+    branch_name=$(echo "$branch" | sed 's/^[[:space:]]*//')
+    git merge "$branch_name"
+  fi
+}
+
 # ログブラウザ
 function glf() {
   git log --oneline --color=always |
