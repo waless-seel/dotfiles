@@ -12,6 +12,7 @@ node     = "lts"
 python   = "latest"
 claude   = "latest"
 codex    = "latest"
+gemini   = "latest"
 
 [tasks.install]
 description = "全ツールをインストール"

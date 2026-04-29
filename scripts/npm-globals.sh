@@ -2,7 +2,6 @@
 set -e
 
 packages=(
-    "@google/gemini-cli"
     "@github/copilot"
 )
 
