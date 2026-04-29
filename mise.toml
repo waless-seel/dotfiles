@@ -15,18 +15,6 @@ claude   = "latest"
 codex    = "latest"
 gemini   = "latest"
 
-[tasks.install]
-description = "全ツールをインストール"
-run = ["mise install", "mise run npm-globals"]
-
-[tasks.npm-globals]
-description = "グローバル npm パッケージをインストール (.default-npm-packages)"
-run = "bash scripts/npm-globals.sh"
-
-[tasks.update]
-description = "全ツールを最新版に更新"
-run = "mise upgrade"
-
 [tasks.doctor]
 description = "インストール状態を診断"
 run = ["mise doctor", "mise ls"]
