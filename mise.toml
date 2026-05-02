@@ -15,6 +15,10 @@ claude   = "latest"
 codex    = "latest"
 gemini   = "latest"
 
+[env]
+PYTHONUTF8 = 1
+
 [tasks.doctor]
 description = "インストール状態を診断"
 run = ["mise doctor", "mise ls"]
+
