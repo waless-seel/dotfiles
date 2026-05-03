@@ -15,9 +15,11 @@ Write-Host "Starting dotfiles setup..." -ForegroundColor $ColorYellow
 # Git for Windows のインストール (bash を含む)
 Write-Host ""
 Write-Host "Checking Git..." -ForegroundColor $ColorYellow
-if (Get-Command git -ErrorAction SilentlyContinue) {
+if (Get-Command git -ErrorAction SilentlyContinue)
+{
     Write-Host "✓ Git はインストール済みです" -ForegroundColor $ColorGreen
-} else {
+} else
+{
     Write-Host "Git for Windows をインストールしています..." -ForegroundColor $ColorYellow
     winget install --id Git.Git --silent --accept-source-agreements --accept-package-agreements
     $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
@@ -29,7 +31,8 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
 # Git Bash を WSL より優先（bash がWSLに解決されるのを防ぐ）
 $gitBash = "C:\Program Files\Git\bin"
 $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
-if ((Test-Path $gitBash) -and ($userPath -notlike "*$gitBash*")) {
+if ((Test-Path $gitBash) -and ($userPath -notlike "*$gitBash*"))
+{
     [System.Environment]::SetEnvironmentVariable('Path', "$gitBash;$userPath", 'User')
     $env:Path = "$gitBash;" + $env:Path
     Write-Host "✓ Git Bash を PATH の先頭に追加しました" -ForegroundColor $ColorGreen
@@ -38,7 +41,8 @@ if ((Test-Path $gitBash) -and ($userPath -notlike "*$gitBash*")) {
 # mise のインストール (winget)
 Write-Host ""
 Write-Host "Checking mise..." -ForegroundColor $ColorYellow
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command winget -ErrorAction SilentlyContinue))
+{
     Write-Host "ERROR: winget が見つかりません。Microsoft Store から 'App Installer' をインストールしてください。" -ForegroundColor $ColorRed
     exit 1
 }
@@ -46,9 +50,11 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
 # GPG のインストール (mise の署名検証に必要)
 Write-Host ""
 Write-Host "Checking GPG..." -ForegroundColor $ColorYellow
-if (Get-Command gpg -ErrorAction SilentlyContinue) {
+if (Get-Command gpg -ErrorAction SilentlyContinue)
+{
     Write-Host "✓ GPG はインストール済みです" -ForegroundColor $ColorGreen
-} else {
+} else
+{
     Write-Host "GPG をインストールしています..." -ForegroundColor $ColorYellow
     winget install --id GnuPG.GnuPG --silent --accept-source-agreements --accept-package-agreements
     $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
@@ -57,9 +63,11 @@ if (Get-Command gpg -ErrorAction SilentlyContinue) {
     Write-Host "✓ GPG をインストールしました" -ForegroundColor $ColorGreen
 }
 
-if (Get-Command mise -ErrorAction SilentlyContinue) {
+if (Get-Command mise -ErrorAction SilentlyContinue)
+{
     Write-Host "✓ mise はインストール済みです" -ForegroundColor $ColorGreen
-} else {
+} else
+{
     Write-Host "mise をインストールしています..." -ForegroundColor $ColorYellow
     winget install --id jdx.mise --silent --accept-source-agreements --accept-package-agreements
     $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
@@ -69,7 +77,8 @@ if (Get-Command mise -ErrorAction SilentlyContinue) {
 }
 
 # Function to create symlink
-function New-DotfilesLink {
+function New-DotfilesLink
+{
     param(
         [string]$SourcePath,
         [string]$DestinationPath,
@@ -78,22 +87,25 @@ function New-DotfilesLink {
 
     # Create destination directory if it doesn't exist
     $DestDir = Split-Path -Parent $DestinationPath
-    if (-not (Test-Path $DestDir)) {
+    if (-not (Test-Path $DestDir))
+    {
         New-Item -ItemType Directory -Path $DestDir -Force | Out-Null
     }
 
     # Remove existing symlink or file
-    if (Test-Path $DestinationPath) {
+    if (Test-Path $DestinationPath)
+    {
         Write-Host "Removing existing $Name..." -ForegroundColor $ColorYellow
         Remove-Item -Path $DestinationPath -Force
     }
 
     # Create hardlink
-    try {
+    try
+    {
         New-Item -ItemType HardLink -Path $DestinationPath -Target $SourcePath -Force -ErrorAction Stop | Out-Null
         Write-Host "✓ Created hardlink for $Name" -ForegroundColor $ColorGreen
-    }
-    catch {
+    } catch
+    {
         Write-Host "✗ Failed to create hardlink for $Name" -ForegroundColor $ColorRed
         Write-Host "  Error: $_" -ForegroundColor $ColorRed
         exit 1
@@ -113,20 +125,24 @@ Write-Host ""
 Write-Host "Setting up PowerShell..." -ForegroundColor $ColorYellow
 
 $ProfileDir = Split-Path -Parent $Profile
-if (-not (Test-Path $ProfileDir)) {
+if (-not (Test-Path $ProfileDir))
+{
     New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
 }
 
 $ProfileLine = ". `"$DotfilesDir\pwsh\Microsoft.PowerShell_profile.ps1`""
-if (-not (Test-Path $Profile)) {
+if (-not (Test-Path $Profile))
+{
     New-Item -ItemType File -Path $Profile -Force | Out-Null
 }
 
 $ProfileContent = Get-Content $Profile -ErrorAction SilentlyContinue
-if ($ProfileContent -notcontains $ProfileLine) {
+if ($ProfileContent -notcontains $ProfileLine)
+{
     Add-Content -Path $Profile -Value $ProfileLine
     Write-Host "✓ PowerShell profile に dotfiles の読み込みを追加しました" -ForegroundColor $ColorGreen
-} else {
+} else
+{
     Write-Host "✓ PowerShell profile は設定済みです" -ForegroundColor $ColorGreen
 }
 
@@ -142,7 +158,7 @@ New-DotfilesLink `
 Write-Host ""
 Write-Host "Running mise install..." -ForegroundColor $ColorYellow
 mise trust "$DotfilesDir\mise.toml"
-mise run install
+mise install
 Write-Host "✓ mise install 完了" -ForegroundColor $ColorGreen
 
 Write-Host ""

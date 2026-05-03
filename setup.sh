@@ -90,7 +90,7 @@ create_symlink \
 # ツールを一括インストール
 echo -e "\n${YELLOW}Running mise install...${NC}"
 mise trust "$DOTFILES_DIR/mise.toml"
-mise run install
+mise install
 echo -e "${GREEN}✓ mise install 完了${NC}"
 
 echo -e "\n${GREEN}✓ Dotfiles setup completed successfully!${NC}"
