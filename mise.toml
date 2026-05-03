@@ -10,7 +10,8 @@ delta    = "latest"
 lazygit  = "latest"
 node     = "lts"
 ruby     = "latest"
-python   = "latest"
+python   = "python@3.13"
+uv       = "latest"
 claude   = "latest"
 codex    = "latest"
 gemini   = "latest"
@@ -18,7 +19,9 @@ gemini   = "latest"
 [env]
 PYTHONUTF8 = 1
 
+[settings]
+python.uv_venv_auto = "create|source"
+
 [tasks.doctor]
 description = "インストール状態を診断"
 run = ["mise doctor", "mise ls"]
-
