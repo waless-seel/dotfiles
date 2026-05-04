@@ -19,6 +19,7 @@ claude   = "latest"
 codex    = "latest"
 gemini   = "latest"
 "github:microsoft/apm" = "latest"
+"github:zellij-org/zellij" = "latest"
 
 [env]
 PYTHONUTF8 = 1
