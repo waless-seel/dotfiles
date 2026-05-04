@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pwsh:*)",
+      "Bash(git:*)",
+      "Bash(do echo:*)",
+      "Bash(chmod +x:*)",
+      "Bash(find /c/Users/seless/home/Projects/dotfiles -type f -name README* -o -name *.md)",
+      "Bash(mise --version)",
+      "Bash(mise registry:*)",
+      "Bash(mise --help)",
+      "Bash(mise backends:*)",
+      "Bash(mise config:*)",
+      "Bash(mise settings:*)",
+      "Bash(for cmd:*)",
+      "Bash(do)",
+      "Bash(where \"$cmd\")",
+      "Bash(echo \"  -> $cmd found\")",
+      "Bash(echo \"  -> $cmd NOT found\")",
+      "Bash(winget uninstall:*)",
+      "Bash(mise trust *)",
+      "Bash(mise env *)"
+    ]
+  }
+}
