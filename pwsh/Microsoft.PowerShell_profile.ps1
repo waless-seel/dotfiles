@@ -1,7 +1,9 @@
 (&mise activate pwsh) | Out-String | Invoke-Expression
 
 Import-Module Terminal-Icons -ErrorAction SilentlyContinue
-Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
+if (-not [Console]::IsOutputRedirected -and -not [Console]::IsInputRedirected) {
+    Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
+}
 
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
@@ -14,3 +16,4 @@ Remove-Variable _pythonHome -ErrorAction SilentlyContinue
 
 . "$PSScriptRoot\pwsh_git.ps1"
 . "$PSScriptRoot\pwsh_util.ps1"
+
