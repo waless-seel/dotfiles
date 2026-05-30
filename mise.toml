@@ -29,6 +29,9 @@ PYTHONUTF8 = 1
 [settings]
 python.uv_venv_auto = "create|source"
 
+[settings.ruby]
+compile = false
+
 [tasks.doctor]
 description = "インストール状態を診断"
 run = ["mise doctor", "mise ls"]
