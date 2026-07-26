@@ -80,6 +80,21 @@ create_symlink \
     "$HOME_DIR/.zshrc" \
     "zsh configuration"
 
+# PowerShell 設定 (macOS / Linux)
+echo -e "\n${YELLOW}Setting up PowerShell...${NC}"
+create_symlink \
+    "$DOTFILES_DIR/pwsh/Microsoft.PowerShell_profile.ps1" \
+    "$HOME_DIR/.config/powershell/Microsoft.PowerShell_profile.ps1" \
+    "PowerShell profile"
+create_symlink \
+    "$DOTFILES_DIR/pwsh/pwsh_git.ps1" \
+    "$HOME_DIR/.config/powershell/pwsh_git.ps1" \
+    "PowerShell git utilities"
+create_symlink \
+    "$DOTFILES_DIR/pwsh/pwsh_util.ps1" \
+    "$HOME_DIR/.config/powershell/pwsh_util.ps1" \
+    "PowerShell utilities"
+
 # mise グローバル config
 echo -e "\n${YELLOW}Setting up mise...${NC}"
 create_symlink \
